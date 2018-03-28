@@ -4,10 +4,7 @@ use Moose;
 use Irssi;
 
 has 'prefix'    => ( is => 'ro' );
-has 'log_level' => (
-  is      => 'ro',
-  default => 'debug',
-);
+has 'log_level' => ( is => 'rw' );
 
 sub error {
   my ($self, $message) = @_;
@@ -16,7 +13,14 @@ sub error {
 
 sub debug {
 	my ($self, $message) = @_;
-	if ($self->log_level eq 'debug') {
+	if ($self->log_level >= 1) {
+		$self->send('debug', $message);
+	}
+}
+
+sub verbose {
+  my ($self, $message) = @_;
+	if ($self->log_level >= 2) {
 		$self->send('debug', $message);
 	}
 }
