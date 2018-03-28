@@ -4,13 +4,12 @@ use Moose;
 use HTTP::Tiny;
 use JSON;
 use URI;
+use IrssiSpy::Notification;
 
-has 'api_url'     => ( is => 'ro' );
-has 'api_key'     => ( is => 'ro' );
-has 'logger'      => ( is => 'ro' );
-has 'event_name'  => ( is => 'ro' );
-has 'nick'        => ( is => 'ro' );
-has 'channel'     => ( is => 'ro' );
+has 'api_url'       => ( is => 'rw' );
+has 'api_key'       => ( is => 'rw' );
+has 'logger'        => ( is => 'ro' );
+has 'event_name'    => ( is => 'ro' );
 
 has 'http' => (
   is => 'ro',
@@ -24,12 +23,12 @@ has 'http' => (
 );
 
 sub trigger {
-  my ($self) = @_;
+  my ($self, $notification) = @_;
   my $uri_path = $self->event_name . '/with/key/' . $self->api_key;
   my $uri = URI->new($uri_path)->abs($self->api_url);
   my $json = encode_json {
-    value1 => $self->nick,
-    value2 => $self->channel,
+    value1 => $notification->name,
+    value2 => $notification->location,
   };
   $self->logger->debug($uri);
   $self->logger->debug($json);
