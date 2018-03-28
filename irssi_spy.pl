@@ -32,7 +32,6 @@ my $ifttt_webhook = IrssiSpy::IFTTTWebhook->new(
 	api_url   	=> Irssi::settings_get_str($IRSSI{'name'} . '_api_url'),
 	api_key   	=> Irssi::settings_get_str($IRSSI{'name'} . '_api_key'),
 	logger			=> $logger,
-	event_name	=> 'irssi',
 );
 
 sub handle_pub {
@@ -43,7 +42,31 @@ sub handle_pub {
 			location	=> $target,
 			name			=> $user,
 		);
-		$ifttt_webhook->trigger($notification);
+		$ifttt_webhook->trigger('irssi', $notification);
+	}
+}
+
+sub handle_priv {
+	my ($server, $message, $user, $address, $target) = @_;
+	if (index($message, $server->{nick}) != -1) {
+		my $notification = new IrssiSpy::Notification(
+			network		=> $address,
+			location	=> $target,
+			name			=> $user,
+		);
+		$ifttt_webhook->trigger('irssi_priv', $notification);
+	}
+}
+
+sub test {
+	my ($server, $message, $user, $address, $target) = @_;
+	if ($server->{nick} eq $user) {
+		my $notification = new IrssiSpy::Notification(
+			network		=> $address,
+			location	=> $target,
+			name			=> $user,
+		);
+		$ifttt_webhook->trigger('irssi_priv', $notification);
 	}
 }
 
@@ -54,4 +77,6 @@ sub update_config {
 }
 
 Irssi::signal_add_last("message public", "handle_pub");
+Irssi::signal_add_last("message private", "handle_priv");
+Irssi::signal_add_last("message own_private", "test");
 Irssi::signal_add_last("setup reread", "update_config");

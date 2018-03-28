@@ -9,7 +9,6 @@ use IrssiSpy::Notification;
 has 'api_url'       => ( is => 'rw' );
 has 'api_key'       => ( is => 'rw' );
 has 'logger'        => ( is => 'ro' );
-has 'event_name'    => ( is => 'ro' );
 
 has 'http' => (
   is => 'ro',
@@ -23,12 +22,13 @@ has 'http' => (
 );
 
 sub trigger {
-  my ($self, $notification) = @_;
-  my $uri_path = $self->event_name . '/with/key/' . $self->api_key;
+  my ($self, $event_name, $notification) = @_;
+  my $uri_path = $event_name . '/with/key/' . $self->api_key;
   my $uri = URI->new($uri_path)->abs($self->api_url);
   my $json = encode_json {
-    value1 => $notification->name,
-    value2 => $notification->location,
+    value1  => $notification->name,
+    value2  => $notification->location,
+    value3  => $notification->network,
   };
   $self->logger->debug($uri);
   $self->logger->debug($json);
