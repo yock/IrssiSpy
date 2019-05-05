@@ -4,7 +4,7 @@ Notification system for Irssi using the IFTTT Maker service.
 
 ## Setup
 
-First, make sure you have enabled both the [Maker service][maker_service] and the [Nofications service][notifications_service] on IFTTT. 
+First, make sure you have enabled both the [Maker service][maker_service] and the [Notifications service][notifications_service] on IFTTT. 
 
 ## Settings
 
